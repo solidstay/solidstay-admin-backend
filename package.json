@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "echo \"No build step necessary\""
   },
@@ -31,5 +31,8 @@
     "stripe": "^16.6.0",
     "uuid": "^11.1.0",
     "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

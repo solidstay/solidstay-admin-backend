@@ -1,4 +1,7 @@
 {
-  "production": ["https://admin.solidstayproperties.co.uk"],
+  "production": [
+    "https://admin.solidstayproperties.co.uk",
+    "https://solidstayproperties.co.uk/"
+  ],
   "development": ["http://localhost:5200", "http://localhost:3000"]
 }

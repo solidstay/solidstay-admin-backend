@@ -12,17 +12,8 @@ const routes = require("./routes/index");
 const trimMiddleware = require("./middleware/trimMiddleware");
 const errorHandlerMiddleware = require("./middleware/errorHandlerMiddleware");
 
-// Require a minimal set of env vars for local development.
-// In production, include storage-related vars (currently AWS, migrating later).
+// Require only DB connection for app startup; storage is optional and currently disabled.
 const requiredEnv = ["DB_URI"];
-if (process.env.NODE_ENV === "production") {
-  requiredEnv.push(
-    "AWS_ACCESS_KEY_ID",
-    "AWS_SECRET_ACCESS_KEY",
-    "AWS_REGION",
-    "AWS_BUCKET_NAME"
-  );
-}
 
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);
 

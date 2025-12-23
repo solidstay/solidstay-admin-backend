@@ -1,20 +1,14 @@
 const express = require("express");
-const axios = require("axios");
 const router = express.Router();
-const AWS = require("aws-sdk");
 const multer = require("multer");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
+// Temporarily disabled pending migration away from AWS S3 to Supabase Storage.
+// Keeps the same route signature but returns 503 to prevent accidental uploads.
 router.post("/upload", upload.array("images", 10), async (req, res) => {
-  try {
+  /* try {
     const files = req.files;
     if (!files || files.length === 0) {
       return res.status(400).send("No files uploaded.");
@@ -38,7 +32,13 @@ router.post("/upload", upload.array("images", 10), async (req, res) => {
   } catch (error) {
     console.error("Error uploading files:", error);
     res.status(500).json({ success: false, error: error.message });
-  }
+  } */
+  router.post("/upload", upload.array("images", 10), async (req, res) => {
+    return res.status(503).json({
+      success: false,
+      message: "Image upload is temporarily disabled while we migrate storage.",
+    });
+  });
 });
 
 module.exports = router;

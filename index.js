@@ -1,21 +1,28 @@
-require("dotenv").config({ path: "configs/.env" });
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const allowedOrigins = require("./configs/allowedOrigins.config.json");
-require("dotenv").config({ path: "./configs/.env" });
+// Load env from root .env first, then fallback to configs/.env
+const dotenv = require("dotenv");
+dotenv.config();
+dotenv.config({ path: "./configs/.env" });
 const connectDB = require("./configs/db.config");
 const routes = require("./routes/index");
 const trimMiddleware = require("./middleware/trimMiddleware");
 const errorHandlerMiddleware = require("./middleware/errorHandlerMiddleware");
 
-const requiredEnv = [
-  "AWS_ACCESS_KEY_ID",
-  "AWS_SECRET_ACCESS_KEY",
-  "AWS_REGION",
-  "AWS_BUCKET_NAME",
-];
+// Require a minimal set of env vars for local development.
+// In production, include storage-related vars (currently AWS, migrating later).
+const requiredEnv = ["DB_URI"];
+if (process.env.NODE_ENV === "production") {
+  requiredEnv.push(
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_REGION",
+    "AWS_BUCKET_NAME"
+  );
+}
 
 const missingEnv = requiredEnv.filter((key) => !process.env[key]);
 
@@ -32,7 +39,14 @@ const app = express();
 const port = process.env.PORT || 8080;
 const env =
   process.env.NODE_ENV === "production" ? "production" : "development";
-const origins = allowedOrigins[env];
+// Allow extra CORS origins via env for quick deploys (comma-separated)
+const extraOrigins = (process.env.CORS_EXTRA_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+const origins = Array.from(
+  new Set([...(allowedOrigins[env] || []), ...extraOrigins])
+);
 const corsOptions = {
   origin: origins,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
@@ -58,7 +72,7 @@ connectDB(DB);
 
 //Server status endpoint
 app.get("/", (req, res) => {
-  res.send("AdStatixx Server is up!");
+  res.send("SolidStay Server is up!");
 });
 
 // Routes

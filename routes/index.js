@@ -1,6 +1,6 @@
 const express = require("express");
 const UserRoutes = require("./userRoutes");
-const imageRoutes = require("./s3Images");
+const imageRoutes = require("./imageUploads");
 const PropertyRoutes = require("./propertyRoutes");
 const bookingRoutes = require("./bookingRoutes");
 const router = express.Router();

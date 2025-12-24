@@ -41,7 +41,7 @@ const ForgotPassword = async (req, res, next) => {
     );
     const data = {
       companyLogo:
-        "http://api.solidstayproperties.co.uk/static/images/logo.png",
+        "https://api.solidstayproperties.co.uk/static/images/logo.png",
       userName: user.name,
       resetLink,
     };

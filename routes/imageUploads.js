@@ -7,7 +7,6 @@ const { v4: uuidv4 } = require("uuid");
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// Supabase Storage upload route.
 router.post("/upload", upload.array("images", 10), async (req, res) => {
   try {
     const files = req.files;
@@ -25,22 +24,31 @@ router.post("/upload", upload.array("images", 10), async (req, res) => {
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
+    const bucket = process.env.SUPABASE_BUCKET;
+    if (!bucket) {
+      return res.status(500).json({
+        success: false,
+        message: "Supabase bucket is not configured.",
+      });
+    }
 
     const uploads = await Promise.all(
       files.map(async (file) => {
         const safeName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
         const path = `uploads/${Date.now()}-${uuidv4()}-${safeName}`;
 
-        const { error } = await supabase.storage.from("images").upload(path, file.buffer, {
-          contentType: file.mimetype,
-          upsert: false,
-        });
+        const { error } = await supabase.storage
+          .from(bucket)
+          .upload(path, file.buffer, {
+            contentType: file.mimetype,
+            upsert: false,
+          });
 
         if (error) {
           throw error;
         }
 
-        const { data } = supabase.storage.from("images").getPublicUrl(path);
+        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
         return data.publicUrl;
       })
     );

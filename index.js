@@ -1,12 +1,9 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const allowedOrigins = require("./configs/allowedOrigins.config.json");
-// Load env from root .env first, then fallback to configs/.env
-const dotenv = require("dotenv");
-dotenv.config();
-dotenv.config({ path: "./configs/.env" });
 const connectDB = require("./configs/db.config");
 const routes = require("./routes/index");
 const trimMiddleware = require("./middleware/trimMiddleware");
